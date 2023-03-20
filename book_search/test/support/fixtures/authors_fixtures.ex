@@ -11,7 +11,8 @@ defmodule BookSearch.AuthorsFixtures do
     {:ok, author} =
       attrs
       |> Enum.into(%{
-        name: "some name"
+        name: "some name",
+        birth_date: Date.new!(2000, 6, 28)
       })
       |> BookSearch.Authors.create_author()
 

@@ -10,10 +10,9 @@ defmodule BookSearch.AuthorsTest do
 
     @invalid_attrs %{name: nil}
 
-
     test "list_authors/0 with two authors returns all authors" do
       author1 = author_fixture()
-      {:ok, author2} = Authors.create_author(%{name: "Mohsin :)"})
+      {:ok, author2} = Authors.create_author(%{name: "Mohsin :)", birth_date: ~D[2022-01-20]})
 
       assert Authors.list_authors() == [author1, author2]
     end
@@ -56,10 +55,22 @@ defmodule BookSearch.AuthorsTest do
     end
 
     test "create_author/1 with valid data creates a author" do
-      valid_attrs = %{name: "some name"}
+      valid_attrs = %{name: "some name", birth_date: ~D[2000-06-28]}
 
       assert {:ok, %Author{} = author} = Authors.create_author(valid_attrs)
       assert author.name == "some name"
+    end
+
+    test "create_author/1 with todays date creates an author" do
+      today = Date.utc_today()
+      valid_attrs = %{name: "some name", birth_date: today}
+      assert {:ok, %Author{} = author} = Authors.create_author(valid_attrs)
+    end
+
+    test "create_author/1 with date in the future returns error changeset" do
+      future = Date.add(Date.utc_today(), 1)
+      valid_attrs = %{name: "some name", birth_date: future}
+      assert {:error, %Ecto.Changeset{}} = Authors.create_author(valid_attrs)
     end
 
     test "create_author/1 with invalid data returns error changeset" do

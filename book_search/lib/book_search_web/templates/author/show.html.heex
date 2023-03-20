@@ -7,6 +7,11 @@
     <%= @author.name %>
   </li>
 
+  <li>
+    <strong>Birth Date:</strong>
+    <%= Calendar.strftime(@author.birth_date, "%B %-d, %Y") %>
+  </li>
+
 </ul>
 
 <span><%= link "Edit", to: Routes.author_path(@conn, :edit, @author) %></span> |
