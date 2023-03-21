@@ -5,6 +5,7 @@ defmodule BookSearch.Authors.Author do
   schema "authors" do
     field :name, :string
     field :birth_date, :date
+    has_many :books, BookSearch.Books.Book
 
     timestamps()
   end
