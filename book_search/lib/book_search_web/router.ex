@@ -20,6 +20,7 @@ defmodule BookSearchWeb.Router do
     get "/", PageController, :index
     resources "/authors", AuthorController
     resources "/books", BookController
+    get "/authors/:id/books/new", BookController, :new
   end
 
   # Other scopes may use custom stacks.

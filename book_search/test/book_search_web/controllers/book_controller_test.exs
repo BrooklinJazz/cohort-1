@@ -1,7 +1,9 @@
 defmodule BookSearchWeb.BookControllerTest do
   use BookSearchWeb.ConnCase
 
+  alias BookSearch.Books
   import BookSearch.BooksFixtures
+  import BookSearch.AuthorsFixtures
 
   @create_attrs %{title: "some title"}
   @update_attrs %{title: "some updated title"}
@@ -30,6 +32,27 @@ defmodule BookSearchWeb.BookControllerTest do
 
       conn = get(conn, Routes.book_path(conn, :show, id))
       assert html_response(conn, 200) =~ "Show Book"
+    end
+
+    test "creates a book with an associated author", %{conn: conn} do
+      author = author_fixture()
+
+      conn =
+        post(conn, Routes.book_path(conn, :create),
+          book: %{title: "some title", author_id: author.id}
+        )
+
+      assert %{id: id} = redirected_params(conn)
+      assert redirected_to(conn) == Routes.book_path(conn, :show, id)
+
+      # assert on data
+      book = Books.get_book!(id)
+      assert book.author_id == author.id
+
+      # # assert on page behavior
+      conn = get(conn, Routes.book_path(conn, :show, id))
+      assert html_response(conn, 200) =~ "Show Book"
+      assert html_response(conn, 200) =~ author.name
     end
 
     test "renders errors when data is invalid", %{conn: conn} do

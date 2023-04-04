@@ -15,5 +15,6 @@ defmodule BookSearch.Books.Book do
     book
     |> cast(attrs, [:title, :author_id])
     |> validate_required([:title])
+    |> foreign_key_constraint(:author_id)
   end
 end

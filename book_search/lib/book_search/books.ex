@@ -35,7 +35,13 @@ defmodule BookSearch.Books do
       ** (Ecto.NoResultsError)
 
   """
-  def get_book!(id), do: Repo.get!(Book, id)
+  def get_book!(id) do
+    query =
+      from b in Book,
+        preload: :author
+
+    Repo.get!(query, id)
+  end
 
   @doc """
   Creates a book.
