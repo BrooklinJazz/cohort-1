@@ -1,6 +1,24 @@
 /* This file is for your main application CSS */
 @import "./phoenix.css";
 
+.drag-n-drop {
+  background-color: lightgrey;
+  width: 100%;
+  margin-bottom: 2rem;
+  border-radius: 1rem;
+  padding: 10rem;
+  text-align: center;
+}
+
+.dragover {
+  opacity: 0.5;
+}
+
+
+.drag-n-drop:hover {
+  cursor: pointer;
+}
+
 /* Alerts and form errors used by phx.new */
 .alert {
   padding: 15px;

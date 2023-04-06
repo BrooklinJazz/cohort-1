@@ -43,3 +43,15 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+dragndrop = document.getElementById("drag-n-drop")
+
+console.log(dragndrop)
+
+dragndrop.ondragover = function (event) {
+    dragndrop.classList.add("dragover")
+}
+
+dragndrop.ondragleave = function (event) {
+    dragndrop.classList.remove("dragover")
+}
+

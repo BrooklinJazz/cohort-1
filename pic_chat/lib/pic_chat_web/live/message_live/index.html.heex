@@ -8,6 +8,7 @@
       title={@page_title}
       action={@live_action}
       message={@message}
+      uploads={@uploads}
       return_to={Routes.message_index_path(@socket, :index)}
     />
   </.modal>
@@ -27,6 +28,7 @@
       <tr id={"message-#{message.id}"}>
         <td><%= message.content %></td>
         <td><%= message.from %></td>
+        <td><img src={message.media} /></td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.message_show_path(@socket, :show, message) %></span>

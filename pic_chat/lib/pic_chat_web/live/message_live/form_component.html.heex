@@ -17,6 +17,18 @@
     <%= text_input f, :from %>
     <%= error_tag f, :from %>
 
+    <%= label f, :media %>
+    <label id="drag-n-drop"  class="drag-n-drop" phx-drop-target={@uploads.media.ref}>
+          Click or drag and drop to upload image
+          <%= live_file_input @uploads.media, style: "display: none;" %>
+    </label>
+    <%= error_tag f, :media %>
+
+    <%= for entry <- @uploads.media.entries do %>
+      <%= live_img_preview List.first(@uploads.media.entries), width: 100 %>
+      <p><%= entry.client_name %></p>
+    <% end %>
+
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>
     </div>

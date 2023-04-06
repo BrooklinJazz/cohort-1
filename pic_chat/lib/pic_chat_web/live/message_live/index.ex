@@ -8,7 +8,11 @@ defmodule PicChatWeb.MessageLive.Index do
   def mount(_params, _session, socket) do
     IO.inspect("Message.Live MOUNT")
     IO.inspect(self())
-    {:ok, assign(socket, :messages, Chat.list_messages())}
+
+    {:ok,
+     socket
+     |> assign(:messages, Chat.list_messages())
+     |> allow_upload(:media, accept: [".jpg", ".png", ".jpeg"], max_entries: 1)}
   end
 
   @impl true
