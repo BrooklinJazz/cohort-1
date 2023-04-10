@@ -6,13 +6,37 @@ defmodule PicChatWeb.MessageLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    IO.inspect("Message.Live MOUNT")
-    IO.inspect(self())
+    PicChatWeb.Endpoint.subscribe("chat_messages")
 
     {:ok,
      socket
      |> assign(:messages, Chat.list_messages())
      |> allow_upload(:media, accept: [".jpg", ".png", ".jpeg"], max_entries: 1)}
+  end
+
+  def handle_info(%{event: "broadcast_message"} = data, socket) do
+    {:noreply, assign(socket, :messages, Chat.list_messages())}
+  end
+
+  def handle_info(%{event: "delete_message"} = data, socket) do
+    message_id = data.payload.message_id
+
+    filtered_messages = Enum.reject(socket.assigns.messages, fn each -> each.id == message_id end)
+
+    {:noreply, assign(socket, :messages, filtered_messages)}
+  end
+
+  def handle_info(%{event: "edit_message", payload: updated_message}, socket) do
+    updated_messages =
+      Enum.map(socket.assigns.messages, fn each ->
+        if each.id == updated_message.id do
+          updated_message
+        else
+          each
+        end
+      end)
+
+    {:noreply, assign(socket, :messages, updated_messages)}
   end
 
   @impl true
@@ -44,6 +68,12 @@ defmodule PicChatWeb.MessageLive.Index do
     message = Chat.get_message!(id)
     {:ok, _} = Chat.delete_message(message)
 
-    {:noreply, assign(socket, :messages, Chat.list_messages())}
+    PicChatWeb.Endpoint.broadcast_from(self(), "chat_messages", "delete_message", %{
+      message_id: message.id
+    })
+
+    filtered_messages = Enum.reject(socket.assigns.messages, fn each -> each.id == message.id end)
+
+    {:noreply, assign(socket, :messages, filtered_messages)}
   end
 end
