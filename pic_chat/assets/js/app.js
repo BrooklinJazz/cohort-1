@@ -22,15 +22,45 @@ import "../css/app.css"
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
+import { Socket } from "phoenix"
+import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+
+let Hooks = {
+    InfiniteScroll: {
+        scrollAt() {
+            return this.el.scrollTop / (this.el.scrollHeight - this.el.clientHeight) * 100
+        },
+        page() {
+            console.log(this.el.dataset.page)
+            return parseInt(this.el.dataset.page)
+        },
+        mounted() {
+            this.pushEvent("ping", {})
+            this.handleEvent("pong", () => {
+                console.log("I WAS PONGED")
+            })
+            this.pending = this.page()
+            this.el.addEventListener("scroll", (event) => {
+                // When scrollAt is 90 or above, send a message to the server
+                if (this.pending == this.page() && this.scrollAt() > 90) {
+                    this.pending = this.pending + 1
+                    this.pushEvent("get-more") // async
+                }
+            })
+        },
+        updated() {
+            this.pending = this.page()
+        }
+    }
+}
+
+let liveSocket = new LiveSocket("/live", Socket, { params: { _csrf_token: csrfToken }, hooks: Hooks })
 
 // Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
+topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
 window.addEventListener("phx:page-loading-start", info => topbar.show())
 window.addEventListener("phx:page-loading-stop", info => topbar.hide())
 

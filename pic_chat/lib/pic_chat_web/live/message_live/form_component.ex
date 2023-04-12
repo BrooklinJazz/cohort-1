@@ -67,9 +67,9 @@ defmodule PicChatWeb.MessageLive.FormComponent do
 
   defp save_message(socket, :new, message_params) do
     case Chat.create_message(message_params) do
-      {:ok, _message} ->
+      {:ok, message} ->
         # broadcast
-        PicChatWeb.Endpoint.broadcast("chat_messages", "broadcast_message", %{})
+        PicChatWeb.Endpoint.broadcast("chat_messages", "create_message", message)
 
         {:noreply,
          socket

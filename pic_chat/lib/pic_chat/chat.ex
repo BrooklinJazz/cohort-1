@@ -17,6 +17,12 @@ defmodule PicChat.Chat do
       [%Message{}, ...]
 
   """
+  def list_messages(opts) do
+    limit = opts[:limit]
+    offset = opts[:offset]
+    Repo.all(from m in Message, limit: ^limit, offset: ^offset, order_by: [desc: m.id, desc: m.inserted_at])
+  end
+
   def list_messages do
     Repo.all(Message)
   end

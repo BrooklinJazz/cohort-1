@@ -10,14 +10,17 @@ defmodule PicChatWeb.MessageLive.Index do
 
     {:ok,
      socket
-     |> assign(:messages, Chat.list_messages())
+     |> assign(:messages, Chat.list_messages(limit: 10))
+     |> assign(:page, 1)
      |> allow_upload(:media, accept: [".jpg", ".png", ".jpeg"], max_entries: 1)}
   end
 
-  def handle_info(%{event: "broadcast_message"} = data, socket) do
-    {:noreply, assign(socket, :messages, Chat.list_messages())}
+  @impl true
+  def handle_info(%{event: "create_message", payload: message}, socket) do
+    {:noreply, assign(socket, :messages, [message | socket.assigns.messages])}
   end
 
+  @impl true
   def handle_info(%{event: "delete_message"} = data, socket) do
     message_id = data.payload.message_id
 
@@ -26,6 +29,7 @@ defmodule PicChatWeb.MessageLive.Index do
     {:noreply, assign(socket, :messages, filtered_messages)}
   end
 
+  @impl true
   def handle_info(%{event: "edit_message", payload: updated_message}, socket) do
     updated_messages =
       Enum.map(socket.assigns.messages, fn each ->
@@ -61,6 +65,23 @@ defmodule PicChatWeb.MessageLive.Index do
     socket
     |> assign(:page_title, "Listing Messages")
     |> assign(:message, nil)
+  end
+
+  def handle_event("get-more", _params, socket) do
+    Process.sleep(1000)
+    offset = socket.assigns.page * 10
+    current_messages = socket.assigns.messages
+    next_messages = Chat.list_messages(limit: 10, offset: offset)
+
+    {:noreply,
+     socket
+     |> assign(:messages, current_messages ++ next_messages)
+     |> assign(:page, socket.assigns.page + 1)
+     |> assign(:loading, false)}
+  end
+
+  def handle_event("ping", _params, socket) do
+    {:noreply, push_event(socket, "pong", %{})}
   end
 
   @impl true

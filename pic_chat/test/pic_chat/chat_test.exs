@@ -15,6 +15,37 @@ defmodule PicChat.ChatTest do
       assert Chat.list_messages() == [message]
     end
 
+    test "list_messages/1 limit messages" do
+      messages =
+        Enum.map(1..10, fn each ->
+          message_fixture()
+        end)
+
+      assert Chat.list_messages(limit: 5) == Enum.slice(messages, 0..4)
+    end
+
+    test "list_messages/1 paginate messages" do
+      messages =
+        Enum.map(1..10, fn each ->
+          message_fixture()
+        end)
+
+      assert Chat.list_messages(limit: 5, offset: 1) == Enum.slice(messages, 1..5)
+    end
+
+    test "list_messages/1 100 messages" do
+      messages =
+        Enum.map(1..100, fn each ->
+          message_fixture()
+        end)
+        |> Enum.reverse()
+
+      assert Chat.list_messages(limit: 10, offset: 0) == Enum.slice(messages, 0..9)
+      assert Chat.list_messages(limit: 10, offset: 10) == Enum.slice(messages, 10..19)
+      assert Chat.list_messages(limit: 10, offset: 80) == Enum.slice(messages, 80..89)
+      assert Chat.list_messages(limit: 10, offset: 90) == Enum.slice(messages, 90..99)
+    end
+
     test "get_message!/1 returns the message with given id" do
       message = message_fixture()
       assert Chat.get_message!(message.id) == message

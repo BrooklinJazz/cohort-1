@@ -9,3 +9,12 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+
+alias PicChat.Chat
+
+Enum.each(1..100, fn each ->
+  Chat.create_message(%{
+    content: "some awesome content #{each}",
+    from: "some amazing from #{each}"
+  })
+end)
