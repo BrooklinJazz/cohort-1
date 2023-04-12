@@ -20,6 +20,7 @@ defmodule PicChat.ChatTest do
         Enum.map(1..10, fn each ->
           message_fixture()
         end)
+        |> Enum.reverse()
 
       assert Chat.list_messages(limit: 5) == Enum.slice(messages, 0..4)
     end
@@ -29,6 +30,7 @@ defmodule PicChat.ChatTest do
         Enum.map(1..10, fn each ->
           message_fixture()
         end)
+        |> Enum.reverse()
 
       assert Chat.list_messages(limit: 5, offset: 1) == Enum.slice(messages, 1..5)
     end

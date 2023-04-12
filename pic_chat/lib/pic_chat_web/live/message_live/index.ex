@@ -11,8 +11,7 @@ defmodule PicChatWeb.MessageLive.Index do
     {:ok,
      socket
      |> assign(:messages, Chat.list_messages(limit: 10))
-     |> assign(:page, 1)
-     |> allow_upload(:media, accept: [".jpg", ".png", ".jpeg"], max_entries: 1)}
+     |> assign(:page, 1)}
   end
 
   @impl true
@@ -45,7 +44,6 @@ defmodule PicChatWeb.MessageLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    IO.inspect(socket.assigns.live_action, label: "Message.Live HANDLE PARAMS")
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
@@ -68,7 +66,6 @@ defmodule PicChatWeb.MessageLive.Index do
   end
 
   def handle_event("get-more", _params, socket) do
-    Process.sleep(1000)
     offset = socket.assigns.page * 10
     current_messages = socket.assigns.messages
     next_messages = Chat.list_messages(limit: 10, offset: offset)

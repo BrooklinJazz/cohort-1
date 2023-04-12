@@ -10,7 +10,7 @@ defmodule PicChatWeb.MessageLive.FormComponent do
   # Renders
 
   def mount(socket) do
-    {:ok, socket}
+    {:ok, allow_upload(socket, :media, accept: [".jpg", ".png", ".jpeg"], max_entries: 1)}
   end
 
   def update(%{message: message} = assigns, socket) do

@@ -8,7 +8,6 @@
       title={@page_title}
       action={@live_action}
       message={@message}
-      uploads={@uploads}
       return_to={Routes.message_index_path(@socket, :index)}
     />
   </.modal>
@@ -42,5 +41,4 @@
   </table>
 </section>
 
-<span><%= live_patch "Patch to New Message", to: Routes.message_index_path(@socket, :new) %></span>
-<span><%= live_redirect "Redirect to New Message", to: Routes.message_index_path(@socket, :new) %></span>
+<span><%= live_patch "New Message", to: Routes.message_index_path(@socket, :new) %></span>
