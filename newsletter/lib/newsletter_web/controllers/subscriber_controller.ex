@@ -17,7 +17,8 @@ defmodule NewsletterWeb.SubscriberController do
   def create(conn, %{"subscriber" => subscriber_params}) do
     case Subscribers.create_subscriber(subscriber_params) do
       {:ok, subscriber} ->
-        Newsletter.Mailer.signup_confirmation(subscriber.name, subscriber.email)
+        Newsletter.Workers.DailyNewsletter.new(subscriber_params)
+        |> Oban.insert!()
 
         conn
         |> put_flash(:info, "Subscriber created successfully.")
